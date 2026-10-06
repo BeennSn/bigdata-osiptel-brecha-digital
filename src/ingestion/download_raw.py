@@ -26,11 +26,20 @@ def descargar_y_descomprimir():
         for item in os.listdir(DIRECTORIO_DESTINO):
             item_path = os.path.join(DIRECTORIO_DESTINO, item)
             
+            # Si es una carpeta extraída (como Copia de Osiptal_DatosNE), movemos su contenido a data/raw/
             if os.path.isdir(item_path) and item not in ["__MACOSX"]:
                 for subitem in os.listdir(item_path):
-                    shutil.move(os.path.join(item_path, subitem), DIRECTORIO_DESTINO)
+                    subitem_path = os.path.join(item_path, subitem)
+                    destino_subitem = os.path.join(DIRECTORIO_DESTINO, subitem)
+                    if os.path.exists(destino_subitem):
+                        if os.path.isdir(destino_subitem):
+                            shutil.rmtree(destino_subitem)
+                        else:
+                            os.remove(destino_subitem)
+                    shutil.move(subitem_path, DIRECTORIO_DESTINO)
                 os.rmdir(item_path)
                 
+        # Limpieza de directorios basura de macOS si existen
         macos_dir = os.path.join(DIRECTORIO_DESTINO, "__MACOSX")
         if os.path.exists(macos_dir):
             shutil.rmtree(macos_dir)
