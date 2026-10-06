@@ -1,0 +1,28 @@
+# Entornos virtuales
+bigdata_env/
+venv/
+.env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Python
+_pycache_/
+*.pyc
+
+# Logs y temporales
+*.log
+*.tmp
+
+# Datos locales
+data/
+osiptel_staging/
+*.xlsx
+*.csv
+*.parquet
+
+# Credenciales y secretos
+*.pem
+*.key
+credentials.json
+secrets.*
