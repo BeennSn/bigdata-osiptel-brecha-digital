@@ -14,12 +14,8 @@ _pycache_/
 *.log
 *.tmp
 
-# Datos locales
-data/
-osiptel_staging/
-*.xlsx
-*.csv
-*.parquet
+# Datos locales y pesados
+data/raw/*.pdf
 
 # Credenciales y secretos
 *.pem
