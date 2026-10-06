@@ -13,7 +13,6 @@ def descargar_y_descomprimir():
     
     try:
         print("Descargando archivo comprimido...")
-        # Se añade confirm_large=True para saltar el aviso de virus de Google Drive
         gdown.download(URL_DIRECTA, ARCHIVO_ZIP_TMP, quiet=False, fuzzy=True, confirm_large=True)
         
         print(f"Descomprimiendo archivos en {DIRECTORIO_DESTINO}...")
