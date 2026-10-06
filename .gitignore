@@ -6,9 +6,11 @@ venv/
 # Jupyter
 .ipynb_checkpoints/
 
-# Python
-_pycache_/
+# Python bytecode y caché
+__pycache__/
 *.pyc
+*.pyo
+*.pyd
 
 # Logs y temporales
 *.log
