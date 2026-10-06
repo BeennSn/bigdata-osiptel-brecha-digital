@@ -74,5 +74,8 @@ Al finalizar el proceso, los datos limpios y estructurados quedarán guardados y
 hdfs://localhost:9000/data/silver/osiptel_textos_limpios.parquet
 ```
 
+### 4. Inicia JupyterLab:
 
-
+```bash
+jupyter lab --ip=0.0.0.0 --port=8888 --no-browser
+```
