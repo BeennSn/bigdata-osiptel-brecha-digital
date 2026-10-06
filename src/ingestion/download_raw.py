@@ -4,7 +4,7 @@ import gdown
 
 # ATENCIÓN: Debes reemplazar este enlace por el enlace directo de descarga del archivo .zip en Google Drive
 # (Ejemplo: https://drive.google.com/uc?id=TU_ID_DE_ARCHIVO_ZIP&export=download)
-URL_ZIP_DRIVE = "https://drive.google.com/file/d/1MGH-8byGDfNDaHqLeS629dhPIlOte18C/view?usp=drive_link"
+URL_ZIP_DRIVE = "https://drive.google.com/file/d/1LPpXSlIEeNQ1g1v4PJ8Bfu8dkg6RMg-R/view?usp=sharing"
 DIRECTORIO_DESTINO = "data/raw"
 ARCHIVO_ZIP_TMP = "data/raw/temp_data.zip"
 
