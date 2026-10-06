@@ -1,4 +1,4 @@
-from src.ingestion.download_raw import descargar_pdfs_desde_drive
+from src.ingestion.download_raw import descargar_y_descomprimir as descargar_pdfs_desde_drive
 from src.ingestion.ingest_osiptel import ejecutar_ingesta_hdfs
 from src.processing.parse_to_silver import procesar_a_silver_con_yarn
 
