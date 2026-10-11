@@ -1,5 +1,5 @@
 {
-  "fecha": "2026-10-11 17:50:03",
+  "fecha": "2026-10-11 23:51:00",
   "descripcion": "Benchmark de escalabilidad en extraccion de PDFs no estructurados a Silver (1x=6, 10x=60, 100x=600)",
   "resultados": [
     {
