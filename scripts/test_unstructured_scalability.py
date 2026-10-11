@@ -156,10 +156,12 @@ def main():
         registros_extraidos = []
         paginas_procesadas = 0
 
-        for ruta_pdf, tipo in cola_procesamiento:
+        for idx, (ruta_pdf, tipo) in enumerate(cola_procesamiento):
             res = procesar_un_pdf(ruta_pdf, tipo)
             registros_extraidos.append(res)
             paginas_procesadas += res.get("paginas_totales", 1)
+            if factor > 1 and ((idx + 1) % (20 if factor == 10 else 100) == 0 or (idx + 1) == num_docs):
+                print(f"  [Progreso {factor}x] {idx + 1}/{num_docs} PDFs analizados...", flush=True)
 
         # Convertir a DataFrame y estructurar en Parquet (simulando paso a Capa Silver)
         df_silver_pdf = pd.DataFrame(registros_extraidos)
