@@ -205,5 +205,11 @@ def ejecutar_ingesta_hdfs(forzar: bool = False):
         print(f"[INFO] Manifiesto existente en {MANIFEST_PATH}. Conservado por persistencia.")
 
 
+def ingest_osiptel_sources(forzar: bool = False):
+    """Punto de entrada estándar para ingesta a HDFS y generación de manifiesto."""
+    return ejecutar_ingesta_hdfs(forzar=forzar)
+
+
+
 if __name__ == "__main__":
-    ejecutar_ingesta_hdfs()
+    ingest_osiptel_sources()

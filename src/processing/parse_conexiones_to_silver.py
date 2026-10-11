@@ -477,5 +477,11 @@ def procesar_conexiones_a_silver(forzar: bool = False):
             shutil.rmtree(temp_dir, ignore_errors=True)
 
 
+def process_conexiones_silver(forzar: bool = False):
+    """Punto de entrada estándar para procesamiento de conexiones de internet fijo a Silver."""
+    return procesar_conexiones_a_silver(forzar=forzar)
+
+
 if __name__ == "__main__":
-    procesar_conexiones_a_silver()
+    process_conexiones_silver()
+

@@ -145,10 +145,22 @@ def procesar_a_gold_con_yarn(forzar: bool = False):
             )
 
         # 7. Escritura en HDFS en formato Parquet comprimido con Snappy particionado por anio
-        print(f"[INFO] Escribiendo dataset analítico Gold en: {HDFS_GOLD_PATH}")
+        print(f"[INFO] Escribiendo dataset analítico Gold en HDFS: {HDFS_GOLD_PATH}")
         df_gold.write.mode("overwrite").format("parquet").option(
             "compression", "snappy"
         ).partitionBy("anio").save(HDFS_GOLD_PATH)
+
+        # 7.1 Guardar copia en data/gold/ local para consumo directo en Notebooks / Pandas
+        local_gold_dir = Path("data/gold")
+        local_gold_dir.mkdir(parents=True, exist_ok=True)
+        local_gold_file = local_gold_dir / "brecha_digital_osiptel.parquet"
+        try:
+            print(f"[INFO] Guardando copia de la capa Gold en almacenamiento local: {local_gold_file}")
+            df_gold_pd = df_gold.toPandas()
+            df_gold_pd.to_parquet(local_gold_file, index=False)
+            df_gold_pd.to_parquet(local_gold_dir / "brecha_digital_consolidada.parquet", index=False)
+        except Exception as e:
+            print(f"[ADVERTENCIA] No se pudo exportar copia local a data/gold/: {e}")
 
         # 8. Métricas de resumen de la capa Gold
         total_filas_gold = df_gold.count()
@@ -159,6 +171,7 @@ def procesar_a_gold_con_yarn(forzar: bool = False):
             "fecha_generacion": datetime.now().isoformat(),
             "capa_origen": HDFS_SILVER_CONEXIONES,
             "capa_destino_gold": HDFS_GOLD_PATH,
+            "capa_destino_local": str(local_gold_file),
             "total_registros_analiticos": int(total_filas_gold),
             "departamentos_cubiertos": int(departamentos_cubiertos),
             "anios_cubiertos": int(anios_cubiertos),
@@ -183,5 +196,11 @@ def procesar_a_gold_con_yarn(forzar: bool = False):
         spark.stop()
 
 
+def build_gold_dataset(forzar: bool = False):
+    """Punto de entrada estándar para integración analítica a Capa Gold."""
+    return procesar_a_gold_con_yarn(forzar=forzar)
+
+
 if __name__ == "__main__":
-    procesar_a_gold_con_yarn()
+    build_gold_dataset()
+

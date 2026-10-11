@@ -86,5 +86,10 @@ def descargar_y_descomprimir(forzar: bool = False):
         raise
 
 
+def download_raw_data(forzar: bool = False):
+    """Punto de entrada estándar para descarga en staging local."""
+    return descargar_y_descomprimir(forzar=forzar)
+
+
 if __name__ == "__main__":
-    descargar_y_descomprimir()
+    download_raw_data()

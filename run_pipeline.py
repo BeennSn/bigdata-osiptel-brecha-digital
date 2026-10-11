@@ -1,65 +1,58 @@
 import argparse
+import logging
 import sys
-from src.ingestion.download_raw import descargar_y_descomprimir as descargar_fuentes_desde_drive
-from src.ingestion.ingest_osiptel import ejecutar_ingesta_hdfs
-from src.processing.parse_to_silver import procesar_a_silver_con_yarn
-from src.processing.parse_conexiones_to_silver import procesar_conexiones_a_silver
-from src.processing.integrate_gold import procesar_a_gold_con_yarn
+from src.ingestion.download_raw import download_raw_data
+from src.ingestion.ingest_osiptel import ingest_osiptel_sources
+from src.processing.parse_to_silver import process_general_silver
+from src.processing.parse_conexiones_to_silver import process_conexiones_silver
+from src.processing.integrate_gold import build_gold_dataset
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
 
-def run_pipeline(forzar: bool = False):
-    print("==================================================")
-    print("INICIANDO PIPELINE DE BIG DATA - OSIPTEL & INEI")
-    print(f"Modo forzado: {'SÍ (reprocesamiento total)' if forzar else 'NO (persistencia/idempotente)'}")
-    print("==================================================")
+def main(forzar: bool = False):
+    logging.info("==================================================")
+    logging.info("INICIANDO PIPELINE DE BIG DATA - OSIPTEL & INEI")
+    logging.info("Modo forzado: %s", "SÍ (reprocesamiento total)" if forzar else "NO (persistencia/idempotente)")
+    logging.info("==================================================")
 
-    # 1. Staging local (descarga de PDF y XLSX desde Google Drive)
-    print("\n[Paso 1/5] Ejecutando descarga en Staging Local...")
+    # 1. Ingesta (Raw): Descarga de fuentes y subida al Data Lake
+    logging.info("=== 1. FASE RAW / INGESTION ===")
     try:
-        descargar_fuentes_desde_drive(forzar=forzar)
+        download_raw_data(forzar=forzar)
+        ingest_osiptel_sources(forzar=forzar)
     except Exception as e:
-        print(f"Error en la descarga local: {e}")
+        logging.error("Fallo durante la Fase Raw / Ingestión: %s", e)
         raise
 
-    # 2. Ingesta al Data Lake (HDFS Raw + Manifest)
-    print("\n[Paso 2/5] Ejecutando ingesta a HDFS y generación de Manifest...")
+    # 2. Procesamiento (Silver): Limpieza, tipado y estandarización
+    logging.info("=== 2. FASE SILVER / LIMPIEZA Y ESTANDARIZACIÓN ===")
     try:
-        ejecutar_ingesta_hdfs(forzar=forzar)
+        process_general_silver(forzar=forzar)
+        process_conexiones_silver(forzar=forzar)
     except Exception as e:
-        print(f"Error en la ingesta a HDFS: {e}")
+        logging.error("Fallo durante la Fase Silver / Procesamiento: %s", e)
         raise
 
-    # 3. Procesamiento con Spark y YARN (capa Silver de PDFs)
-    print("\n[Paso 3/5] Ejecutando procesamiento Spark/YARN a Capa Silver de PDFs...")
+    # 3. Integración (Gold): Cruce de tablas, agregaciones analíticas y persistencia
+    logging.info("=== 3. FASE GOLD / MODELADO E INTEGRACIÓN ===")
     try:
-        procesar_a_silver_con_yarn(forzar=forzar)
+        build_gold_dataset(forzar=forzar)
     except Exception as e:
-        print(f"Error en el procesamiento a Silver de PDFs: {e}")
+        logging.error("Fallo durante la Fase Gold / Integración: %s", e)
         raise
 
-    # 4. Procesamiento con Spark y YARN (Capa Silver de conexiones internet fijo)
-    print("\n[Paso 4/5] Ejecutando procesamiento Spark/YARN a Capa Silver de conexiones internet fijo...")
-    try:
-        procesar_conexiones_a_silver(forzar=forzar)
-    except Exception as e:
-        print(f"Error en el procesamiento a Silver de conexiones: {e}")
-        raise
+    logging.info("==================================================")
+    logging.info("✅ Pipeline completado con éxito. Capa Gold lista para consumo.")
+    logging.info("==================================================")
 
-    # 5. Integración analítica con Spark y YARN (Capa Gold consolidada)
-    print("\n[Paso 5/5] Ejecutando integración analítica a Capa Gold en HDFS...")
-    try:
-        procesar_a_gold_con_yarn(forzar=forzar)
-    except Exception as e:
-        print(f"Error en la integración a Gold: {e}")
-        raise
 
-    print("\n==================================================")
-    print("Pipeline finalizado exitosamente: Raw -> Silver -> Gold")
-    print("==================================================")
+# Alias para retrocompatibilidad
+run_pipeline = main
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Pipeline Big Data OSIPTEL")
+    parser = argparse.ArgumentParser(description="Pipeline Big Data OSIPTEL & INEI")
     parser.add_argument(
         "--force",
         "-f",
@@ -67,4 +60,4 @@ if __name__ == "__main__":
         help="Fuerza la ejecución de todos los pasos ignorando verificaciones de persistencia previa.",
     )
     args = parser.parse_args()
-    run_pipeline(forzar=args.force)
+    main(forzar=args.force)

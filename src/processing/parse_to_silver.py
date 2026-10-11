@@ -111,5 +111,10 @@ def procesar_a_silver_con_yarn(forzar: bool = False):
         spark.stop()
 
 
+def process_general_silver(forzar: bool = False):
+    """Punto de entrada estándar para procesamiento de documentos PDF a Silver."""
+    return procesar_a_silver_con_yarn(forzar=forzar)
+
+
 if __name__ == "__main__":
-    procesar_a_silver_con_yarn()
+    process_general_silver()

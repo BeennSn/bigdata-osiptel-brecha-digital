@@ -21,10 +21,13 @@ __pycache__/
 *.pyo
 *.pyd
 
-# Datos locales y pesados de staging
+# Datos locales y pesados de staging y capas locales
 data/raw/datos/
 data/raw/*.pdf
 data/extracted/
+data/gold/*.parquet
+data/silver/*.parquet
+
 
 # Credenciales y secretos
 *.pem
