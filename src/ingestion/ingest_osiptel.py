@@ -111,8 +111,13 @@ def subir_a_hdfs(forzar: bool = False):
                 chunk_size = 50
                 for i in range(0, len(archivos), chunk_size):
                     chunk = archivos[i : i + chunk_size]
-                    cmd = ["hdfs", "dfs", "-put", "-f"] + chunk + [hdfs_dir]
-                    subprocess.run(cmd, check=True)
+                    for archivo_item in chunk:
+                        if " " in os.path.basename(archivo_item):
+                            dest_item = f"{hdfs_dir.rstrip('/')}/{os.path.basename(archivo_item)}"
+                            with open(archivo_item, "rb") as f_in:
+                                subprocess.run(["hdfs", "dfs", "-put", "-f", "-", dest_item], input=f_in.read(), check=True)
+                        else:
+                            subprocess.run(["hdfs", "dfs", "-put", "-f", archivo_item, hdfs_dir], check=True)
 
                 print(f" [ÉXITO] {len(archivos)} archivos subidos correctamente a HDFS: {hdfs_dir}")
 
@@ -122,8 +127,14 @@ def subir_a_hdfs(forzar: bool = False):
                 hdfs_compartido = HDFS_RUTAS["osiptel_mandatos"]
                 subprocess.run(["hdfs", "dfs", "-mkdir", "-p", hdfs_compartido], check=True)
                 for f_xlsx in archivos:
-                    subprocess.run(["hdfs", "dfs", "-put", "-f", f_xlsx, hdfs_compartido], check=True)
+                    if " " in os.path.basename(f_xlsx):
+                        dest_comp = f"{hdfs_compartido.rstrip('/')}/{os.path.basename(f_xlsx)}"
+                        with open(f_xlsx, "rb") as f_in:
+                            subprocess.run(["hdfs", "dfs", "-put", "-f", "-", dest_comp], input=f_in.read(), check=True)
+                    else:
+                        subprocess.run(["hdfs", "dfs", "-put", "-f", f_xlsx, hdfs_compartido], check=True)
                 print(f" [ÉXITO] XLSX replicado en ruta compartida: {hdfs_compartido}")
+
 
     except subprocess.CalledProcessError as e:
         print(f"[ERROR] Falló la interacción con HDFS durante la ingesta: {e}")
