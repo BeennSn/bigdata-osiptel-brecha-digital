@@ -23,16 +23,35 @@ from pathlib import Path
 import pandas as pd
 import pypdf
 
-# 1. Identificar rutas de las 3 fuentes
 BASE_DATOS = Path("data/raw/datos") if Path("data/raw/datos").exists() else Path("data/raw")
+MUESTRA_DIR = Path("data/raw/muestra_escalabilidad")
+
 
 def obtener_muestra_base():
+    lista_base = []
+    
+    # 1. Prioridad: carpeta dedicada de muestra garantizada
+    if MUESTRA_DIR.exists():
+        pdfs_muestra = sorted(glob.glob(str(MUESTRA_DIR / "*.pdf")))
+        if len(pdfs_muestra) >= 6:
+            for p in pdfs_muestra:
+                nombre = os.path.basename(p).lower()
+                if "inei" in nombre:
+                    tipo = "inei"
+                elif "mandato" in nombre:
+                    tipo = "mandatos"
+                else:
+                    tipo = "reportes"
+                lista_base.append((p, tipo))
+            return lista_base[:6]
+
+    # 2. Búsqueda en subcarpetas de datos
     carpetas = {
         "inei": ["DatasetINEI", "dataset_inei"],
         "mandatos": ["Osiptal_DatosNE*", "osiptel_mandatos", "osiptel_pdfs"],
         "reportes": ["ReportesOsiptel", "reportes_osiptel"]
     }
-    muestra = {}
+    
     for clave, candidatas in carpetas.items():
         archivos = []
         for c in candidatas:
@@ -41,11 +60,22 @@ def obtener_muestra_base():
                 archivos = sorted(glob.glob(os.path.join(matches[0], "*.pdf")))
                 if archivos:
                     break
-        if not archivos:
-            raise FileNotFoundError(f"No se encontraron PDFs para la fuente {clave}")
-        # Tomar exactamente 2 PDFs
-        muestra[clave] = archivos[:2]
-    return muestra
+        if archivos:
+            for a in archivos[:2]:
+                lista_base.append((a, clave))
+
+    # 3. Fallback: cualquier PDF en data/raw
+    if len(lista_base) < 6:
+        todos_pdfs = sorted(glob.glob(str(BASE_DATOS / "*.pdf")))
+        if len(todos_pdfs) >= 6:
+            for i, p in enumerate(todos_pdfs[:6]):
+                tipo = "inei" if i < 2 else ("mandatos" if i < 4 else "reportes")
+                lista_base.append((p, tipo))
+
+    if not lista_base:
+        raise FileNotFoundError("No se encontraron archivos PDF para la prueba.")
+
+    return lista_base[:6]
 
 
 def procesar_un_pdf(ruta_pdf: str, tipo_origen: str) -> dict:
@@ -104,13 +134,9 @@ def main():
     print("Muestra base: 2 PDFs de cada dataset (INEI, Mandatos, Reportes) = 6 PDFs")
     print("======================================================================")
 
-    muestra = obtener_muestra_base()
-    lista_base = []
-    for tipo, pdfs in muestra.items():
-        print(f"[MUESTRA {tipo.upper()}]:")
-        for p in pdfs:
-            print(f"  • {os.path.basename(p)} ({round(os.path.getsize(p)/1024, 1)} KB)")
-            lista_base.append((p, tipo))
+    lista_base = obtener_muestra_base()
+    for p, tipo in lista_base:
+        print(f"  • [{tipo.upper():8s}] {os.path.basename(p)} ({round(os.path.getsize(p)/1024, 1)} KB)")
 
     print(f"\nTotal documentos base (1x): {len(lista_base)} PDFs")
 

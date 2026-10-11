@@ -27,6 +27,7 @@ data/raw/*.pdf
 data/extracted/
 data/gold/*.parquet
 data/silver/*.parquet
+data/raw/muestra_escalabilidad/
 
 
 # Credenciales y secretos
