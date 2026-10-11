@@ -101,8 +101,28 @@ def procesar_a_silver_con_yarn(forzar: bool = False):
             .mode("overwrite") \
             .parquet(HDFS_SILVER_PATH)
 
-        print("\n[ÉXITO] Procesamiento completado. Silver de PDFs guardado en Parquet.")
+        print("\n[ÉXITO] Procesamiento completado. Silver de PDFs de mandatos guardado en Parquet.")
         df_silver.show(5, truncate=False)
+
+        # 7. Procesar reportes estadísticos de OSIPTEL si existen en HDFS
+        hdfs_reportes_dir = "hdfs://localhost:9000/data/raw/reportes_osiptel/"
+        hdfs_reportes_silver = "hdfs://localhost:9000/data/silver/osiptel_reportes_limpios.parquet"
+        if _hdfs_path_existe(hdfs_reportes_dir):
+            try:
+                df_rep_raw = spark.read.format("binaryFile").option("pathGlobFilter", "*.pdf").load(hdfs_reportes_dir)
+                if df_rep_raw.count() > 0:
+                    df_rep_silver = df_rep_raw.select(
+                        col("path").alias("ruta_hdfs"),
+                        col("length").alias("tamanio_bytes"),
+                        element_at(split(col("path"), "/"), -1).alias("nombre_archivo")
+                    ).withColumn("doc_id", col("nombre_archivo")) \
+                     .withColumn("capa_origen", lit("raw")) \
+                     .withColumn("tipo_documento", lit("reporte_estadistico")) \
+                     .withColumn("estado_procesamiento", lit("silver_estructurado"))
+                    df_rep_silver.write.mode("overwrite").parquet(hdfs_reportes_silver)
+                    print(f"[INFO] Silver de Reportes Estadísticos OSIPTEL guardado en: {hdfs_reportes_silver}")
+            except Exception as e:
+                print(f"[ADVERTENCIA] Error procesando reportes estadísticos a Silver: {e}")
 
     except Exception as e:
         print(f"[ERROR] Falló la ejecución del pipeline en YARN: {e}")

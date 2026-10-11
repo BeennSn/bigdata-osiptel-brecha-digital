@@ -1,0 +1,16 @@
+{
+  "fecha_generacion": "2026-10-11T14:58:27.459560",
+  "fuentes_consolidadas": {
+    "1_conexiones_fijas_excel": "data/raw/datos/internet_fijo/2.1 CONEXIONES DE INTERNET FIJO.xlsx",
+    "2_indicadores_hogares_inei_pdf": "data/silver/inei_indicadores.parquet (44 trimestres)",
+    "3_mandatos_infraestructura_osiptel_pdf": "data/silver/osiptel_mandatos_metricas.parquet (142 PDFs)",
+    "4_reportes_mercado_osiptel_pdf": "data/silver/osiptel_reportes_metricas.parquet (103 PDFs)"
+  },
+  "capa_destino_local": "data/gold/brecha_digital_osiptel.parquet",
+  "total_registros_analiticos": 1177,
+  "registros_consolidados_con_todas_las_fuentes": 1177,
+  "departamentos_cubiertos": 28,
+  "anios_cubiertos": 15,
+  "metrica_temporal": "Cierre de Trimestre (Marzo, Junio, Septiembre, Diciembre)",
+  "particionamiento": "anio (Snappy Parquet)"
+}

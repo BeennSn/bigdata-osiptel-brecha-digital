@@ -104,11 +104,16 @@ def procesar_a_gold_con_yarn(forzar: bool = False):
             )
         )
 
-        # 5. Detección y unión con indicadores del INEI si existen en HDFS
+        # 5. Detección y unión con indicadores del INEI si existen en HDFS o local
         df_inei = None
         ruta_inei_usada = None
-        for candidata in HDFS_INEI_CANDIDATAS:
-            if _hdfs_path_existe(candidata):
+        rutas_candidatas_inei = [
+            "hdfs://localhost:9000/data/silver/inei_indicadores.parquet",
+            "data/silver/inei_indicadores.parquet",
+            "hdfs://localhost:9000/datalake/osiptel_proyecto/silver/inei_indicadores_versiones",
+        ]
+        for candidata in rutas_candidatas_inei:
+            if candidata.startswith("hdfs://") and _hdfs_path_existe(candidata):
                 try:
                     df_inei = spark.read.parquet(candidata)
                     ruta_inei_usada = candidata
@@ -116,11 +121,21 @@ def procesar_a_gold_con_yarn(forzar: bool = False):
                     break
                 except Exception:
                     pass
+            elif not candidata.startswith("hdfs://") and os.path.exists(candidata):
+                try:
+                    df_inei = spark.read.parquet(candidata)
+                    ruta_inei_usada = candidata
+                    print(f"[INFO] Indicadores INEI encontrados en disco local: {candidata}")
+                    break
+                except Exception:
+                    pass
 
         # 6. Integración mediante LEFT JOIN (preservando todas las conexiones de OSIPTEL)
         if df_inei is not None and "trimestre" in df_inei.columns and "anio" in df_inei.columns:
             print("[INFO] Aplicando LEFT JOIN con serie histórica del INEI...")
-            # Clave de join: si INEI tiene departamento, usar clave compuesta completa
+            if "internet_pct" in df_inei.columns:
+                df_inei = df_inei.withColumnRenamed("internet_pct", "hogares_internet_pct")
+
             claves_join = ["anio", "trimestre"]
             if "departamento" in df_inei.columns:
                 claves_join.append("departamento")
@@ -130,12 +145,12 @@ def procesar_a_gold_con_yarn(forzar: bool = False):
                 .withColumn(
                     "estado_integracion",
                     F.when(F.col("hogares_internet_pct").isNull(), F.lit("SIN_DATO_INEI"))
-                    .otherwise(F.lit("CONSOLIDADO")),
+                    .otherwise(F.lit("CONSOLIDADO_TOTAL_MULTI_FUENTE")),
                 )
             )
         else:
             print(
-                "[INFO] Serie INEI no detectada en HDFS; generando estructura analítica Gold "
+                "[INFO] Serie INEI no detectada; generando estructura analítica Gold "
                 "con columnas preparadas para cruce multivariado."
             )
             df_gold = (
@@ -143,6 +158,32 @@ def procesar_a_gold_con_yarn(forzar: bool = False):
                 .withColumn("computadora_pct", F.lit(None).cast("double"))
                 .withColumn("estado_integracion", F.lit("OSIPTEL_CONSOLIDADO_PENDIENTE_INEI"))
             )
+
+        # 6.1 Integrar métricas de mandatos regulatorios (Osiptal_DatosNE) y reportes de mercado
+        mandatos_path = "data/silver/osiptel_mandatos_metricas.parquet"
+        reportes_path = "data/silver/osiptel_reportes_metricas.parquet"
+
+        if os.path.exists(mandatos_path):
+            try:
+                df_mand = spark.read.parquet(mandatos_path)
+                df_gold = df_gold.join(df_mand, on="anio", how="left")
+                print(f"[INFO] Mandatos regulatorios integrados a Capa Gold desde {mandatos_path}")
+            except Exception as e:
+                print(f"[ADVERTENCIA] No se pudo unir mandatos: {e}")
+        if "mandatos_normativos_osiptel" not in df_gold.columns:
+            df_gold = df_gold.withColumn("mandatos_normativos_osiptel", F.lit(0).cast("int"))
+
+        if os.path.exists(reportes_path):
+            try:
+                df_rep = spark.read.parquet(reportes_path)
+                df_gold = df_gold.join(df_rep, on="anio", how="left")
+                print(f"[INFO] Reportes de mercado integrados a Capa Gold desde {reportes_path}")
+            except Exception as e:
+                print(f"[ADVERTENCIA] No se pudo unir reportes: {e}")
+        if "reportes_supervision_osiptel" not in df_gold.columns:
+            df_gold = df_gold.withColumn("reportes_supervision_osiptel", F.lit(0).cast("int"))
+
+        df_gold = df_gold.fillna(0, subset=["mandatos_normativos_osiptel", "reportes_supervision_osiptel"])
 
         # 7. Escritura en HDFS en formato Parquet comprimido con Snappy particionado por anio
         print(f"[INFO] Escribiendo dataset analítico Gold en HDFS: {HDFS_GOLD_PATH}")
@@ -202,5 +243,5 @@ def build_gold_dataset(forzar: bool = False):
 
 
 if __name__ == "__main__":
-    build_gold_dataset()
+    build_gold_dataset(forzar=True)
 

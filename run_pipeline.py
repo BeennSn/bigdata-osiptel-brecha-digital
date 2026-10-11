@@ -4,6 +4,8 @@ import sys
 from src.ingestion.download_raw import download_raw_data
 from src.ingestion.ingest_osiptel import ingest_osiptel_sources
 from src.processing.parse_to_silver import process_general_silver
+from src.processing.parse_inei_to_silver import process_inei_silver
+from src.processing.parse_regulatory_to_silver import process_regulatory_silver
 from src.processing.parse_conexiones_to_silver import process_conexiones_silver
 from src.processing.integrate_gold import build_gold_dataset
 
@@ -29,6 +31,8 @@ def main(forzar: bool = False):
     logging.info("=== 2. FASE SILVER / LIMPIEZA Y ESTANDARIZACIÓN ===")
     try:
         process_general_silver(forzar=forzar)
+        process_inei_silver(forzar=forzar)
+        process_regulatory_silver(forzar=forzar)
         process_conexiones_silver(forzar=forzar)
     except Exception as e:
         logging.error("Fallo durante la Fase Silver / Procesamiento: %s", e)

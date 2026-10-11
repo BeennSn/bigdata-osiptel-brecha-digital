@@ -1,0 +1,15 @@
+{
+  "origen": "DatasetINEI (Informes Técnicos ENAHO)",
+  "destino_local": "data/silver/inei_indicadores.parquet",
+  "destino_hdfs": "hdfs://localhost:9000/data/silver/inei_indicadores.parquet",
+  "total_trimestres_extraidos": 44,
+  "anio_minimo": "2014",
+  "anio_maximo": "2024",
+  "indicadores_extraidos": [
+    "internet_pct",
+    "computadora_pct",
+    "telefonia_fija_pct",
+    "telefonia_movil_pct",
+    "tv_cable_pct"
+  ]
+}
