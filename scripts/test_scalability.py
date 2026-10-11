@@ -166,7 +166,8 @@ def run_benchmark():
         spark.stop()
         print("\n[LIMPIEZA] Eliminando directorios temporales de réplica en HDFS...")
         try:
-            subprocess.run(["hdfs", "dfs", "-rm", "-r", "-skipTrash", HDFS_BENCH_BASE], check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            hdfs_bin = "/opt/hadoop/bin/hdfs" if os.path.exists("/opt/hadoop/bin/hdfs") else "hdfs"
+        subprocess.run([hdfs_bin, "dfs", "-rm", "-r", "-skipTrash", HDFS_BENCH_BASE], check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             print("[LIMPIEZA] ✅ Directorio temporal HDFS eliminado con éxito. Disco liberado.")
         except Exception as e:
             print(f"[LIMPIEZA] Aviso: {e}")

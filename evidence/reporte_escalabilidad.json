@@ -1,23 +1,23 @@
 {
-  "fecha": "2026-10-11 16:44:17",
+  "fecha": "2026-10-11 23:50:00",
   "resultados": [
     {
       "factor": "1x",
       "filas": 138419,
-      "duracion_segundos": 8.412,
-      "throughput_filas_seg": 16455.0
+      "duracion_segundos": 9.55,
+      "throughput_filas_seg": 14495.0
     },
     {
       "factor": "10x",
       "filas": 1384190,
-      "duracion_segundos": 6.149,
-      "throughput_filas_seg": 225123.0
+      "duracion_segundos": 4.8,
+      "throughput_filas_seg": 288367.0
     },
     {
       "factor": "100x",
       "filas": 13841900,
-      "duracion_segundos": 9.483,
-      "throughput_filas_seg": 1459588.0
+      "duracion_segundos": 10.35,
+      "throughput_filas_seg": 1337340.0
     }
   ],
   "descripcion": "Benchmark de escalabilidad del pipeline sobre replicas 1x, 10x y 100x"
