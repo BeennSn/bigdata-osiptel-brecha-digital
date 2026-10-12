@@ -1,39 +1,67 @@
-from src.ingestion.download_raw import descargar_y_descomprimir as descargar_pdfs_desde_drive
-from src.ingestion.ingest_osiptel import ejecutar_ingesta_hdfs
-from src.processing.parse_to_silver import procesar_a_silver_con_yarn
+import argparse
+import logging
+import sys
+from src.ingestion.download_raw import download_raw_data
+from src.ingestion.ingest_osiptel import ingest_osiptel_sources
+from src.processing.parse_to_silver import process_general_silver
+from src.processing.parse_inei_to_silver import process_inei_silver
+from src.processing.parse_regulatory_to_silver import process_regulatory_silver
+from src.processing.parse_conexiones_to_silver import process_conexiones_silver
+from src.processing.integrate_gold import build_gold_dataset
 
-def run_pipeline():
-    print("==================================================")
-    print("🚀 INICIANDO PIPELINE DE BIG DATA - OSIPTEL")
-    print("==================================================")
-    
-    # 1. PASO: Staging Local (Descarga de PDFs desde Google Drive)
-    print("\n[Paso 1/2] Ejecutando descarga en Staging Local...")
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+
+
+def main(forzar: bool = False):
+    logging.info("==================================================")
+    logging.info("INICIANDO PIPELINE DE BIG DATA - OSIPTEL & INEI")
+    logging.info("Modo forzado: %s", "SÍ (reprocesamiento total)" if forzar else "NO (persistencia/idempotente)")
+    logging.info("==================================================")
+
+    # 1. Ingesta (Raw): Descarga de fuentes y subida al Data Lake
+    logging.info("=== 1. FASE RAW / INGESTION ===")
     try:
-        descargar_pdfs_desde_drive()
+        download_raw_data(forzar=forzar)
+        ingest_osiptel_sources(forzar=forzar)
     except Exception as e:
-        print(f"❌ Error en la descarga local: {e}")
-        return
+        logging.error("Fallo durante la Fase Raw / Ingestión: %s", e)
+        raise
 
-    # 2. PASO: Ingesta al Data Lake (HDFS + Manifest)
-    print("\n[Paso 2/2] Ejecutando ingesta a HDFS y generación de Manifest...")
+    # 2. Procesamiento (Silver): Limpieza, tipado y estandarización
+    logging.info("=== 2. FASE SILVER / LIMPIEZA Y ESTANDARIZACIÓN ===")
     try:
-        ejecutar_ingesta_hdfs()
+        process_general_silver(forzar=forzar)
+        process_inei_silver(forzar=forzar)
+        process_regulatory_silver(forzar=forzar)
+        process_conexiones_silver(forzar=forzar)
     except Exception as e:
-        print(f"❌ Error en la ingesta a HDFS: {e}")
-        return
+        logging.error("Fallo durante la Fase Silver / Procesamiento: %s", e)
+        raise
 
-   # 3. PASO: Procesamiento con Spark y YARN (Capa Silver)  <--- AÑADIR ESTE BLOQUE
-    print("\n[Paso 3/3] Ejecutando procesamiento Spark/YARN a Capa Silver...")
+    # 3. Integración (Gold): Cruce de tablas, agregaciones analíticas y persistencia
+    logging.info("=== 3. FASE GOLD / MODELADO E INTEGRACIÓN ===")
     try:
-        procesar_a_silver_con_yarn()
+        build_gold_dataset(forzar=forzar)
     except Exception as e:
-        print(f"❌ Error en el procesamiento a Silver: {e}")
-        return
+        logging.error("Fallo durante la Fase Gold / Integración: %s", e)
+        raise
 
-    print("\n==================================================")
-    print("🎉 ¡Pipeline completo (Raw + Silver) ejecutado exitosamente!")
-    print("==================================================")
+    logging.info("==================================================")
+    logging.info("✅ Pipeline completado con éxito. Capa Gold lista para consumo.")
+    logging.info("==================================================")
+
+
+# Alias para retrocompatibilidad
+run_pipeline = main
+
 
 if __name__ == "__main__":
-    run_pipeline()
+    parser = argparse.ArgumentParser(description="Pipeline Big Data OSIPTEL & INEI")
+    parser.add_argument(
+        "--force",
+        "-f",
+        action="store_true",
+        help="Fuerza la ejecución de todos los pasos ignorando verificaciones de persistencia previa.",
+    )
+    args = parser.parse_args()
+    main(forzar=args.force)

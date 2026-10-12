@@ -1,0 +1,33 @@
+{
+  "fecha": "2026-10-11 23:51:00",
+  "descripcion": "Benchmark de escalabilidad en extraccion de PDFs no estructurados a Silver (1x=6, 10x=60, 100x=600)",
+  "resultados": [
+    {
+      "factor": "1x",
+      "pdfs_procesados": 6,
+      "paginas_totales": 126,
+      "duracion_segundos": 0.697,
+      "throughput_pdfs_seg": 8.61,
+      "throughput_pags_seg": 180.9,
+      "tamanio_parquet_kb": 6.3
+    },
+    {
+      "factor": "10x",
+      "pdfs_procesados": 60,
+      "paginas_totales": 1260,
+      "duracion_segundos": 9.249,
+      "throughput_pdfs_seg": 6.49,
+      "throughput_pags_seg": 136.2,
+      "tamanio_parquet_kb": 6.42
+    },
+    {
+      "factor": "100x",
+      "pdfs_procesados": 600,
+      "paginas_totales": 12600,
+      "duracion_segundos": 90.68,
+      "throughput_pdfs_seg": 6.62,
+      "throughput_pags_seg": 139.0,
+      "tamanio_parquet_kb": 6.5
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "filas_leidas": 141106,
+  "filas_rechazadas": 201,
+  "filas_validas": 138419,
+  "duplicados_eliminados": 2486,
+  "conflictos_de_clave": 1264,
+  "atipicos_marcados": 20271,
+  "nulos_por_columna": {
+    "Mes": 0,
+    "Empresa": 91,
+    "Tecnologia": 0,
+    "Segmento": 0,
+    "Departamento": 201,
+    "Rango Velocidad de Bajada (nominal)": 13029,
+    "Conexiones": 0
+  },
+  "completitud_por_campo": {
+    "Mes": 100.0,
+    "Empresa": 99.94,
+    "Tecnologia": 100.0,
+    "Segmento": 100.0,
+    "Departamento": 99.86,
+    "Rango Velocidad de Bajada (nominal)": 90.77,
+    "Conexiones": 100.0
+  }
+}

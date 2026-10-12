@@ -1,7 +1,16 @@
 # Entornos virtuales
+.venv/
 bigdata_env/
 venv/
 .env/
+
+# Archivos de sistema y temporales
+.DS_Store
+*/.DS_Store
+**/.DS_Store
+FETCH_HEAD
+*.log
+*.tmp
 
 # Jupyter
 .ipynb_checkpoints/
@@ -12,12 +21,14 @@ __pycache__/
 *.pyo
 *.pyd
 
-# Logs y temporales
-*.log
-*.tmp
-
-# Datos locales y pesados
+# Datos locales y pesados de staging y capas locales
+data/raw/datos/
 data/raw/*.pdf
+data/extracted/
+data/gold/*.parquet
+data/silver/*.parquet
+data/raw/muestra_escalabilidad/
+
 
 # Credenciales y secretos
 *.pem
