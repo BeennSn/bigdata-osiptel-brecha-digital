@@ -110,54 +110,111 @@ def trimestre(encabezado):
 
 
 def extraer_tabla(pagina, n_pagina, nombre, sha):
+    """Lee tablas de Computadora/Internet por ano; admite nombres de area partidos.
+
+    La extraccion es conservadora: exige los cuatro ambitos y un par de
+    columnas (computadora, internet) por cada ano. No publica resultados.
+    """
     lineas = pagina.splitlines()
     lineas_n = [compacto(x) for x in lineas]
     lista = []
     for idx, titulo in enumerate(lineas_n):
-        if not re.search(r'Peru:\s*Hogares con (?:acceso a\s+)?[Cc]omputadora\s+e\s+Internet,\s+segun area de residencia', titulo, re.I):
+        # En informes como 2023 'segun area de residencia' se parte en dos
+        # lineas y una columna lateral intercala texto narrativo.
+        if not re.search(
+            r'Peru:\s*Hogares con acceso a computadora e Internet,\s*segun area de',
+            titulo, re.I
+        ):
             continue
-        # Delimitar tabla; cabeceras y filas deben estar cerca del título.
-        sub = lineas_n[idx:idx + 23]
-        trimestre_linea = next((x for x in sub[:7] if 'Trimestre:' in x), '')
+        if not (
+            re.search(r'area de residencia\b', titulo, re.I) or
+            any(re.match(r'^residencia\b', s, re.I) for s in lineas_n[idx+1:idx+4])
+        ):
+            continue
+
+        # No cruzar al siguiente cuadro al recorrer la tabla.
+        final = min(idx + 45, len(lineas_n))
+        for pos in range(idx+2, final):
+            if re.search(r'^(?:Cuadro|Grafico)\s+N', lineas_n[pos], re.I):
+                final = pos
+                break
+        sub = lineas_n[idx:final]
+        trimestre_linea = next((x for x in sub[:8] if re.search(r'^Trimestre:', x, re.I)), '')
         if not trimestre_linea:
             continue
         trim = trimestre(trimestre_linea)
         anios = re.findall(r'\b20\d{2}\b', trimestre_linea)
         if not trim or not (2 <= len(anios) <= 8) or len(set(anios)) != len(anios):
             continue
+
+        # Comprobar que es una tabla pareada: no basta con una mencion de
+        # computadora e internet en el titulo.
+        cab = ' '.join(sub[:15]).lower()
+        encabezado_pareado = (
+            re.search(r'compu-.*inter-', cab, re.I) is not None or
+            ('computadora' in cab and 'internet' in cab)
+        )
+        if not encabezado_pareado:
+            continue
+
         filas = {}
-        pat = re.compile(r'^(Total|Lima Metropolitana(?:\s+[12]/)?|Resto urbano(?:\s+[12]/)?|Area rural)\s+(.*)$', re.I)
+        pendiente_lima = False
+        pat_fila = re.compile(
+            r'^(Total|Lima Metropolitana(?:\s+[12]/)?|Resto urbano(?:\s+[12]/)?|Area rural)\s*(.*)$',
+            re.I)
+        pat_num = re.compile(r'(?<!\d)-?\d{1,3},\d{1,2}(?!\d)')
+
         for row in sub[2:]:
-            m = pat.match(row)
-            if not m:
+            # En 2023: 'Lima' / 'Metropolitana 1/' / '53,7 63,9 ...'
+            if re.fullmatch(r'Lima', row, re.I):
+                pendiente_lima = True
                 continue
-            area = re.sub(r'\s+[12]/$', '', m.group(1), flags=re.I)
-            area = 'Nacional' if area.lower() == 'total' else area
-            area = next((x for x in AREAS if x.lower() == area.lower()), area)
-            numeros = re.findall(r'(?<!\d)-?\d{1,3},\d{1,2}(?!\d)', m.group(2))
-            if len(numeros) >= 2 * len(anios):
-                filas[area] = (numeros, row)
-        # Una tabla parcial queda sin publicar, no rellenar ámbitos ausentes.
+            if pendiente_lima and re.fullmatch(r'Metropolitana(?:\s+[12]/)?', row, re.I):
+                continue
+
+            m = pat_fila.match(row)
+            if m:
+                area = re.sub(r'\s+[12]/$', '', m.group(1), flags=re.I)
+                area = 'Nacional' if area.lower() == 'total' else area
+                area = next((x for x in AREAS if x.lower() == area.lower()), area)
+                resto = m.group(2)
+                numeros = pat_num.findall(resto)
+                if area == 'Lima Metropolitana' and not numeros:
+                    pendiente_lima = True
+                    continue
+                pendiente_lima = False
+                if len(numeros) >= 2 * len(anios):
+                    filas[area] = (numeros[:2 * len(anios)], row)
+                continue
+
+            if pendiente_lima:
+                # Una fila numerica sin etiqueta sigue al nombre partido.
+                numeros = pat_num.findall(row)
+                if len(numeros) >= 2 * len(anios) and re.match(r'^-?\d{1,3},\d', row):
+                    filas['Lima Metropolitana'] = (numeros[:2 * len(anios)],
+                                                  'Lima Metropolitana 1/ ' + row)
+                    pendiente_lima = False
+                elif row and not re.match(r'^Metropolitana(?:\s+[12]/)?$', row, re.I):
+                    # La etiqueta debe estar seguida inmediatamente por
+                    # su complemento o una fila numerica.
+                    pendiente_lima = False
+
+        # No completar datos ausentes por interpolacion ni inferencia.
         if set(filas) != set(AREAS):
             continue
-        # El formato comprobado alterna Computadora e Internet por año.
-        # No aplicar si el encabezado no muestra ambas variables.
-        encabezado = ' '.join(sub[:13]).lower()
-        if not ('computadora' in encabezado and 'internet' in encabezado):
-            continue
-        referencia = 'Tabla/cuadro de Internet por area (revisar numero)'
-        # Buscar el numero del cuadro en lineas que preceden al título.
-        anterior = ' '.join(lineas_n[max(0, idx-3):idx])
+
+        anterior = ' '.join(lineas_n[max(0, idx-4):idx])
         nro = re.search(r'Cuadro\s+N[^\d]{0,6}(\d+\.\d+)', anterior, re.I)
-        if nro:
-            referencia = 'Cuadro {}'.format(nro.group(1))
+        referencia = 'Cuadro {}'.format(nro.group(1)) if nro else 'Tabla acceso a Internet por area'
+        resultados = []
         for area in AREAS:
             numeros, evidencia = filas[area]
             for j, anio in enumerate(anios):
                 valor = num(numeros[2*j + 1])
-                lista.append(indicador('{}-T{}'.format(anio, trim), area, valor,
-                                       nombre, sha, n_pagina, referencia,
-                                       'TABLA_PAREADA', evidencia))
+                resultados.append(indicador('{}-T{}'.format(anio, trim), area, valor,
+                                             nombre, sha, n_pagina, referencia,
+                                             'TABLA_PAREADA', evidencia))
+        lista.extend(resultados)
     return lista
 
 
