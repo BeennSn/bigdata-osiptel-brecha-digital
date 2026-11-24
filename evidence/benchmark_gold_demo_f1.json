@@ -1,0 +1,38 @@
+{
+  "estado": "OK",
+  "repeticiones": 3,
+  "registros_historicos": 136575,
+  "registros_delta": 4531,
+  "grupos_historicos_preparados": 604,
+  "tiempo_preparacion_estado_historico_segundos": 7.568,
+  "kpis": [
+    {
+      "periodo": "2026-03",
+      "total_conexiones": 4135995,
+      "filas": 4531
+    },
+    {
+      "periodo": "2025-12",
+      "total_conexiones": 4379544,
+      "filas": 4750
+    }
+  ],
+  "alertas_verificadas": 17,
+  "equivalencia_con_gold_demo_publicado": true,
+  "tiempos_segundos": {
+    "completo": [
+      1.14,
+      0.939,
+      0.838
+    ],
+    "incremental_con_estado": [
+      3.892,
+      3.444,
+      3.131
+    ]
+  },
+  "mediana_completo_segundos": 0.939,
+  "mediana_incremental_segundos": 3.444,
+  "razon_mediana_completo_sobre_incremental": 0.273,
+  "aclaracion": "Comparación de cálculo Gold con estado histórico preagregado; no es duración end-to-end ni benchmark de la demo incremental actualmente desplegada. Solo lectura HDFS."
+}
