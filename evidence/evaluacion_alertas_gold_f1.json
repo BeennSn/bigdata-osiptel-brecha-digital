@@ -1,0 +1,48 @@
+{
+  "filas_panel": 611,
+  "filas_con_campos_completos": 602,
+  "filas_excluidas_por_nulos": 9,
+  "combinaciones_elegibles": 156,
+  "regla_actual": {
+    "alertas": 30,
+    "prioridad_alta": 11,
+    "prioridad_media": 19,
+    "aumentos": 4,
+    "disminuciones": 26
+  },
+  "sensibilidad_umbral": [
+    {
+      "minimo_conexiones": 500,
+      "minimo_porcentaje": 10,
+      "alertas": 41,
+      "aumentos": 9,
+      "disminuciones": 32
+    },
+    {
+      "minimo_conexiones": 1000,
+      "minimo_porcentaje": 15,
+      "alertas": 30,
+      "aumentos": 4,
+      "disminuciones": 26
+    },
+    {
+      "minimo_conexiones": 2000,
+      "minimo_porcentaje": 20,
+      "alertas": 22,
+      "aumentos": 2,
+      "disminuciones": 20
+    },
+    {
+      "minimo_conexiones": 5000,
+      "minimo_porcentaje": 25,
+      "alertas": 17,
+      "aumentos": 1,
+      "disminuciones": 16
+    }
+  ],
+  "comparacion_top30_variacion_absoluta": {
+    "coincidencias": 22,
+    "solo_regla_actual": 8,
+    "solo_referencia": 8
+  }
+}

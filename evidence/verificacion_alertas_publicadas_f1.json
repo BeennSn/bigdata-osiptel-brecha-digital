@@ -1,0 +1,110 @@
+{
+  "panel": 611,
+  "elegibles": 156,
+  "alertas_recalculadas": 30,
+  "alertas_publicadas": 30,
+  "faltantes": [],
+  "sobrantes": [],
+  "prioridades_distintas": [],
+  "coincidencias_top30": 22,
+  "solo_nuestra_regla": [
+    {
+      "operador": "CABLENORTV S.A.C.",
+      "departamento": "TUMBES",
+      "delta": -1867,
+      "variacion_pct": -84.4796
+    },
+    {
+      "operador": "CALA SERVICIOS INTEGRALES S.A.",
+      "departamento": "CAJAMARCA",
+      "delta": 1572,
+      "variacion_pct": 21.3848
+    },
+    {
+      "operador": "STARLINK PERU S.R.L.",
+      "departamento": "MADRE DE DIOS",
+      "delta": 1371,
+      "variacion_pct": 31.0884
+    },
+    {
+      "operador": "VIETTEL PERU S.A.C.",
+      "departamento": "CALLAO",
+      "delta": -1759,
+      "variacion_pct": -24.309
+    },
+    {
+      "operador": "VIETTEL PERU S.A.C.",
+      "departamento": "CUSCO",
+      "delta": -1499,
+      "variacion_pct": -19.25
+    },
+    {
+      "operador": "WOW TEL S.A.C.",
+      "departamento": "AMAZONAS",
+      "delta": -1082,
+      "variacion_pct": -29.133
+    },
+    {
+      "operador": "WOW TEL S.A.C.",
+      "departamento": "HUANCAVELICA",
+      "delta": -1498,
+      "variacion_pct": -20.5205
+    },
+    {
+      "operador": "WOW TEL S.A.C.",
+      "departamento": "PASCO",
+      "delta": -1664,
+      "variacion_pct": -39.2453
+    }
+  ],
+  "solo_referencia": [
+    {
+      "operador": "AMERICA MOVIL PERU S.A.C.",
+      "departamento": "LAMBAYEQUE",
+      "delta": 2572,
+      "variacion_pct": 5.3205
+    },
+    {
+      "operador": "AMERICA MOVIL PERU S.A.C.",
+      "departamento": "LIMA",
+      "delta": 12796,
+      "variacion_pct": 2.8075
+    },
+    {
+      "operador": "INTEGRATEL PERU S.A.A.",
+      "departamento": "AREQUIPA",
+      "delta": -4130,
+      "variacion_pct": -7.1363
+    },
+    {
+      "operador": "INTEGRATEL PERU S.A.A.",
+      "departamento": "CALLAO",
+      "delta": -2860,
+      "variacion_pct": -5.4473
+    },
+    {
+      "operador": "INTEGRATEL PERU S.A.A.",
+      "departamento": "LA LIBERTAD",
+      "delta": -3299,
+      "variacion_pct": -6.349
+    },
+    {
+      "operador": "INTEGRATEL PERU S.A.A.",
+      "departamento": "LIMA",
+      "delta": -6977,
+      "variacion_pct": -1.055
+    },
+    {
+      "operador": "WI-NET TELECOM S.A.C.",
+      "departamento": "CALLAO",
+      "delta": 2766,
+      "variacion_pct": 5.1265
+    },
+    {
+      "operador": "WI-NET TELECOM S.A.C.",
+      "departamento": "LIMA",
+      "delta": 31855,
+      "variacion_pct": 5.128
+    }
+  ]
+}
