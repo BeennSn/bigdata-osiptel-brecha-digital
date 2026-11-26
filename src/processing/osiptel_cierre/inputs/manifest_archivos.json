@@ -1,0 +1,26 @@
+{
+  "revision": "documental_2026_11_26",
+  "nota": "Conformidad documental asistida; no aprobacion institucional",
+  "files": {
+    "F2_menciones_auditadas.csv": {
+      "sha256": "5c1ab165e3629fcf07eef9fc2de29fdb91daa3d63e73e6ef50d6c0af136eabbf",
+      "bytes": 137143
+    },
+    "F3_12_cifras_corregidas_y_verificadas.csv": {
+      "sha256": "a3e516d5c4f2f01ffc30603a2a3106466395be9793f2a3d2e96f933e163db57a",
+      "bytes": 5063
+    },
+    "F4_102_conflictos_para_revision.csv": {
+      "sha256": "0831ac3a8d9a14c19a9e201eb7c9e9ba95a6f7325ca26f97fc2a73953ba78d4e",
+      "bytes": 27928
+    },
+    "F4_20_indicadores_narrativa_verificados.csv": {
+      "sha256": "52a5cf4ed4fc29060bf15a7597f6a65e6eceb64cdab40e918c8752692d40a269",
+      "bytes": 5628
+    },
+    "F4_94_series_con_estado_revision.csv": {
+      "sha256": "641409d5d32d9bd5da40db9d6e82bd0c261dd03bcaf1752e9b6eaf4702009d4c",
+      "bytes": 36261
+    }
+  }
+}

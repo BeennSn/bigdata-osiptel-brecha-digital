@@ -1,0 +1,26 @@
+{
+  "fuente1_sha256_original": "e6e88de8b58ab84f25159d63584300e453d9bb7fe5057f5f31976a602f2ca29a",
+  "fuente1_coincide_snapshot_oci_v1_e6e88de8b58ab84f2515": true,
+  "fuente2_pdfs": 142,
+  "fuente2_menciones": 287,
+  "fuente2_documentos_con_menciones": 88,
+  "fuente2_estados_revision": {
+    "MENCION_CON_TRAZABILIDAD_Y_TERMINO_CORROBORADOS": 287
+  },
+  "fuente3_pdfs": 103,
+  "fuente3_indicadores": 12,
+  "fuente3_estados_revision": {
+    "VALOR_Y_CONTEXTO_VERIFICADOS_EN_PDF": 12
+  },
+  "fuente4_pdfs": 89,
+  "fuente4_evidencias_extraidas": 408,
+  "fuente4_integridad_pdf_pagina": 408,
+  "fuente4_pdfs_con_extraccion": 44,
+  "fuente4_sin_conflicto": 94,
+  "fuente4_grupos_conflicto": 102,
+  "fuente4_verificados_narrativa": 20,
+  "fuente4_coherentes_no_narrativa_pendientes": 74,
+  "conclusion": "Conformidad tecnica de extraccion. 12 F3 corregidos (ver estado por fila), 20 F4 narrativos verificados. F2 como menciones, no mandatos concedidos. 102 conflictos F4 excluidos.",
+  "fuente2_textos_verificados_pymupdf": 278,
+  "fuente2_textos_verificados_pdftotext": 9
+}
