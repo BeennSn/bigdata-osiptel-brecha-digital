@@ -1,0 +1,563 @@
+{
+  "estado": "GENERADO_DESDE_HDFS",
+  "generado_utc": "2026-11-26T02:30:02.319153+00:00",
+  "version_curada": "v1_17b651ac372a96fb18fa",
+  "version_gold_f1": "v2_b6e4155ae58e8f9106d8",
+  "controles": {
+    "tablas_curadas": {
+      "F2": 287,
+      "F3": 12,
+      "F4_verificados": 20,
+      "F4_pendientes": 74,
+      "F4_conflictos": 102,
+      "F1_F4": 5
+    },
+    "F1_nacional": 71,
+    "F1_territorial": 129225,
+    "periodos_inei": 5,
+    "ambitos_inei": 4,
+    "comparaciones_temporales_con_F1": 4
+  },
+  "inei": {
+    "periodos": [
+      "2025-T1",
+      "2025-T3",
+      "2025-T4",
+      "2026-T1",
+      "2026-T2"
+    ],
+    "series": {
+      "2025-T1": {
+        "Nacional": 58.9,
+        "Lima Metropolitana": 80.3,
+        "Resto urbano": 60.7,
+        "Area rural": 20.5
+      },
+      "2025-T3": {
+        "Nacional": 59.7,
+        "Lima Metropolitana": 78.7,
+        "Resto urbano": 62.8,
+        "Area rural": 23.6
+      },
+      "2025-T4": {
+        "Nacional": 60.1,
+        "Lima Metropolitana": 78.2,
+        "Resto urbano": 63.1,
+        "Area rural": 23.4
+      },
+      "2026-T1": {
+        "Nacional": 62.7,
+        "Lima Metropolitana": 82.7,
+        "Resto urbano": 65.0,
+        "Area rural": 25.0
+      },
+      "2026-T2": {
+        "Nacional": 64.5,
+        "Lima Metropolitana": 84.7,
+        "Resto urbano": 66.2,
+        "Area rural": 27.1
+      }
+    },
+    "fuentes": {
+      "2026-T2": {
+        "pdf": "boletin-tic-iit2026.pdf",
+        "pagina": 6,
+        "sha256": "bc1cf662ff64098e4e368b3e0bf2377c29bfb536164330edad8fd3a9bd8f96c0"
+      },
+      "2025-T4": {
+        "pdf": "boletin-tic-oct_dic2025.pdf",
+        "pagina": 6,
+        "sha256": "ee51c138f73def9256f917be9b8c632ec0f817d86a4d4fd658c00feaf2a59324"
+      },
+      "2026-T1": {
+        "pdf": "boletin_tic_itrim2026.pdf",
+        "pagina": 6,
+        "sha256": "23f24fc00cbfd4a6c259bc33cc8bbdee8f1d774a36805b52213d57cd1f98f24e"
+      },
+      "2025-T1": {
+        "pdf": "informe-tecnico_tecnologiasdelainformacion_ene_feb_mar2025.pdf",
+        "pagina": 6,
+        "sha256": "86a57b723ccef2d93a2c96f5a9b988a4a015bf12fd03c2f9cb55e2bda885b7c5"
+      },
+      "2025-T3": {
+        "pdf": "tic-iii-trimestre_2025_1.pdf",
+        "pagina": 6,
+        "sha256": "e84e8a7dae81f52259417228ebdbb360135fd2d9a217e8514721a020c37a793c"
+      }
+    },
+    "ultimo_periodo": "2026-T2",
+    "brecha_rural_lima_pp": 57.6
+  },
+  "osiptel_f1": {
+    "periodo_anterior": "2025-12",
+    "periodo_actual": "2026-03",
+    "conexiones_anterior": 4379544,
+    "conexiones_actual": 4135995,
+    "variacion_absoluta": -243549,
+    "variacion_pct": -5.56,
+    "departamentos_analizados": 25,
+    "departamentos_con_caida_y_base_minima": 24,
+    "prioridad_revision_departamental": [
+      {
+        "departamento": "UCAYALI",
+        "anterior": 86417,
+        "actual": 55514,
+        "diferencia": -30903,
+        "variacion_pct": -35.76
+      },
+      {
+        "departamento": "TUMBES",
+        "anterior": 54640,
+        "actual": 38610,
+        "diferencia": -16030,
+        "variacion_pct": -29.34
+      },
+      {
+        "departamento": "SAN MARTIN",
+        "anterior": 64733,
+        "actual": 52039,
+        "diferencia": -12694,
+        "variacion_pct": -19.61
+      },
+      {
+        "departamento": "APURIMAC",
+        "anterior": 23831,
+        "actual": 19198,
+        "diferencia": -4633,
+        "variacion_pct": -19.44
+      },
+      {
+        "departamento": "PASCO",
+        "anterior": 10920,
+        "actual": 9068,
+        "diferencia": -1852,
+        "variacion_pct": -16.96
+      },
+      {
+        "departamento": "ICA",
+        "anterior": 174592,
+        "actual": 146878,
+        "diferencia": -27714,
+        "variacion_pct": -15.87
+      },
+      {
+        "departamento": "LAMBAYEQUE",
+        "anterior": 212475,
+        "actual": 178985,
+        "diferencia": -33490,
+        "variacion_pct": -15.76
+      },
+      {
+        "departamento": "AYACUCHO",
+        "anterior": 48259,
+        "actual": 40762,
+        "diferencia": -7497,
+        "variacion_pct": -15.53
+      },
+      {
+        "departamento": "HUANUCO",
+        "anterior": 63137,
+        "actual": 53628,
+        "diferencia": -9509,
+        "variacion_pct": -15.06
+      },
+      {
+        "departamento": "JUNIN",
+        "anterior": 116647,
+        "actual": 99378,
+        "diferencia": -17269,
+        "variacion_pct": -14.8
+      }
+    ],
+    "detalle_departamental": [
+      {
+        "departamento": "AMAZONAS",
+        "anterior": 13603,
+        "actual": 13008,
+        "diferencia": -595,
+        "variacion_pct": -4.37
+      },
+      {
+        "departamento": "ANCASH",
+        "anterior": 126148,
+        "actual": 111981,
+        "diferencia": -14167,
+        "variacion_pct": -11.23
+      },
+      {
+        "departamento": "APURIMAC",
+        "anterior": 23831,
+        "actual": 19198,
+        "diferencia": -4633,
+        "variacion_pct": -19.44
+      },
+      {
+        "departamento": "AREQUIPA",
+        "anterior": 233804,
+        "actual": 224313,
+        "diferencia": -9491,
+        "variacion_pct": -4.06
+      },
+      {
+        "departamento": "AYACUCHO",
+        "anterior": 48259,
+        "actual": 40762,
+        "diferencia": -7497,
+        "variacion_pct": -15.53
+      },
+      {
+        "departamento": "CAJAMARCA",
+        "anterior": 70267,
+        "actual": 64630,
+        "diferencia": -5637,
+        "variacion_pct": -8.02
+      },
+      {
+        "departamento": "CALLAO",
+        "anterior": 168661,
+        "actual": 167774,
+        "diferencia": -887,
+        "variacion_pct": -0.53
+      },
+      {
+        "departamento": "CUSCO",
+        "anterior": 109306,
+        "actual": 106695,
+        "diferencia": -2611,
+        "variacion_pct": -2.39
+      },
+      {
+        "departamento": "HUANCAVELICA",
+        "anterior": 13045,
+        "actual": 11874,
+        "diferencia": -1171,
+        "variacion_pct": -8.98
+      },
+      {
+        "departamento": "HUANUCO",
+        "anterior": 63137,
+        "actual": 53628,
+        "diferencia": -9509,
+        "variacion_pct": -15.06
+      },
+      {
+        "departamento": "ICA",
+        "anterior": 174592,
+        "actual": 146878,
+        "diferencia": -27714,
+        "variacion_pct": -15.87
+      },
+      {
+        "departamento": "JUNIN",
+        "anterior": 116647,
+        "actual": 99378,
+        "diferencia": -17269,
+        "variacion_pct": -14.8
+      },
+      {
+        "departamento": "LA LIBERTAD",
+        "anterior": 234469,
+        "actual": 227841,
+        "diferencia": -6628,
+        "variacion_pct": -2.83
+      },
+      {
+        "departamento": "LAMBAYEQUE",
+        "anterior": 212475,
+        "actual": 178985,
+        "diferencia": -33490,
+        "variacion_pct": -15.76
+      },
+      {
+        "departamento": "LIMA",
+        "anterior": 2131777,
+        "actual": 2130340,
+        "diferencia": -1437,
+        "variacion_pct": -0.07
+      },
+      {
+        "departamento": "LORETO",
+        "anterior": 47124,
+        "actual": 41203,
+        "diferencia": -5921,
+        "variacion_pct": -12.56
+      },
+      {
+        "departamento": "MADRE DE DIOS",
+        "anterior": 15077,
+        "actual": 15593,
+        "diferencia": 516,
+        "variacion_pct": 3.42
+      },
+      {
+        "departamento": "MOQUEGUA",
+        "anterior": 33730,
+        "actual": 29256,
+        "diferencia": -4474,
+        "variacion_pct": -13.26
+      },
+      {
+        "departamento": "PASCO",
+        "anterior": 10920,
+        "actual": 9068,
+        "diferencia": -1852,
+        "variacion_pct": -16.96
+      },
+      {
+        "departamento": "PIURA",
+        "anterior": 195429,
+        "actual": 178221,
+        "diferencia": -17208,
+        "variacion_pct": -8.81
+      },
+      {
+        "departamento": "PUNO",
+        "anterior": 71627,
+        "actual": 67258,
+        "diferencia": -4369,
+        "variacion_pct": -6.1
+      },
+      {
+        "departamento": "SAN MARTIN",
+        "anterior": 64733,
+        "actual": 52039,
+        "diferencia": -12694,
+        "variacion_pct": -19.61
+      },
+      {
+        "departamento": "TACNA",
+        "anterior": 59826,
+        "actual": 51948,
+        "diferencia": -7878,
+        "variacion_pct": -13.17
+      },
+      {
+        "departamento": "TUMBES",
+        "anterior": 54640,
+        "actual": 38610,
+        "diferencia": -16030,
+        "variacion_pct": -29.34
+      },
+      {
+        "departamento": "UCAYALI",
+        "anterior": 86417,
+        "actual": 55514,
+        "diferencia": -30903,
+        "variacion_pct": -35.76
+      }
+    ]
+  },
+  "regulacion_f2": [
+    {
+      "tipo": "INFRAESTRUCTURA_COMPARTIDA",
+      "menciones": 88
+    },
+    {
+      "tipo": "SOLICITUD_MANDATO",
+      "menciones": 73
+    },
+    {
+      "tipo": "CONDICION_ECONOMICA_MENCIONADA",
+      "menciones": 71
+    },
+    {
+      "tipo": "PROYECTO_MANDATO",
+      "menciones": 40
+    },
+    {
+      "tipo": "EVALUACION_SOLICITUD",
+      "menciones": 15
+    }
+  ],
+  "estadisticas_f3": [
+    {
+      "periodo": "2022-06",
+      "indicador": "VARIACION_INTERANUAL_CONEXIONES_FIJAS",
+      "valor": 47.95,
+      "entidad": "Huancavelica",
+      "naturaleza": "VARIACION",
+      "documento": "5905738-reporte-estadistico-agosto-2022.pdf",
+      "pagina": 4
+    },
+    {
+      "periodo": "2022-06",
+      "indicador": "VARIACION_INTERANUAL_CONEXIONES_FIJAS",
+      "valor": 30.66,
+      "entidad": "Ica",
+      "naturaleza": "VARIACION",
+      "documento": "5905738-reporte-estadistico-agosto-2022.pdf",
+      "pagina": 4
+    },
+    {
+      "periodo": "2022-06",
+      "indicador": "VARIACION_INTERANUAL_CONEXIONES_FIJAS",
+      "valor": 22.62,
+      "entidad": "Apurimac",
+      "naturaleza": "VARIACION",
+      "documento": "5905738-reporte-estadistico-agosto-2022.pdf",
+      "pagina": 4
+    },
+    {
+      "periodo": "2022-06",
+      "indicador": "VARIACION_INTERANUAL_CONEXIONES_FIJAS",
+      "valor": 18.12,
+      "entidad": "Lambayeque",
+      "naturaleza": "VARIACION",
+      "documento": "5905738-reporte-estadistico-agosto-2022.pdf",
+      "pagina": 4
+    },
+    {
+      "periodo": "2023-03",
+      "indicador": "CONEXIONES_FIJAS_GRUPO_OPERADORES",
+      "valor": 332829.0,
+      "entidad": "Nacional / grupo WI-NET y Optical Technologies",
+      "naturaleza": "STOCK_PARCIAL",
+      "documento": "5905845-reporte-estadistico-n-05-mayo-2023.pdf",
+      "pagina": 2
+    },
+    {
+      "periodo": "2023-06",
+      "indicador": "DISMINUCION_INTERANUAL_CONEXIONES_OPERADOR",
+      "valor": 244206.0,
+      "entidad": "Nacional / Telefonica",
+      "naturaleza": "VARIACION_ABSOLUTA",
+      "documento": "5905857-reporte-estadistico-n-06-agosto-2023.pdf",
+      "pagina": 2
+    },
+    {
+      "periodo": "2023-12",
+      "indicador": "CONEXIONES_FIJAS_TOTAL_NACIONAL",
+      "valor": 3540474.0,
+      "entidad": "Nacional",
+      "naturaleza": "STOCK_NACIONAL",
+      "documento": "5905919-reporte-estadistico-n-01-febrero-2024.pdf",
+      "pagina": 4
+    },
+    {
+      "periodo": "2024-06",
+      "indicador": "CONEXIONES_FIJAS_FIBRA_OPTICA_NACIONAL",
+      "valor": 2540374.0,
+      "entidad": "Nacional / fibra optica",
+      "naturaleza": "STOCK_TECNOLOGIA",
+      "documento": "5905973-reporte-estadistico-n-07-agosto-2024.pdf",
+      "pagina": 1
+    },
+    {
+      "periodo": "2024-09",
+      "indicador": "CONEXIONES_FIJAS_FIBRA_OPTICA_NACIONAL",
+      "valor": 2783379.0,
+      "entidad": "Nacional / fibra optica",
+      "naturaleza": "STOCK_TECNOLOGIA",
+      "documento": "6644026-reporte-estadistico-n-11-noviembre-2024.pdf",
+      "pagina": 1
+    },
+    {
+      "periodo": "2025-03",
+      "indicador": "DISMINUCION_INTERANUAL_CONEXIONES_OPERADOR",
+      "valor": 153363.0,
+      "entidad": "Nacional / Telefonica del Peru",
+      "naturaleza": "VARIACION_ABSOLUTA",
+      "documento": "7801986-reporte-estadistico-n-04-mayo-2025.pdf",
+      "pagina": 2
+    },
+    {
+      "periodo": "2025-09",
+      "indicador": "CONEXIONES_FIJAS_TOTAL_NACIONAL",
+      "valor": 4274935.0,
+      "entidad": "Nacional",
+      "naturaleza": "STOCK_NACIONAL",
+      "documento": "7802440-reporte-estadistico-n-07.pdf",
+      "pagina": 1
+    },
+    {
+      "periodo": "2025-09",
+      "indicador": "DISMINUCION_INTERANUAL_CONEXIONES_OPERADOR",
+      "valor": 167551.0,
+      "entidad": "Nacional / Integratel",
+      "naturaleza": "VARIACION_ABSOLUTA",
+      "documento": "7802440-reporte-estadistico-n-07.pdf",
+      "pagina": 2
+    }
+  ],
+  "comparacion": [
+    {
+      "periodo": "2025-T1",
+      "conexiones_fijas": 4098323,
+      "hogares_pct": 58.9,
+      "estado": "AMBAS_FUENTES",
+      "pdf_inei": "informe-tecnico_tecnologiasdelainformacion_ene_feb_mar2025.pdf",
+      "pagina_pdf_inei": 6
+    },
+    {
+      "periodo": "2025-T3",
+      "conexiones_fijas": 4289604,
+      "hogares_pct": 59.7,
+      "estado": "AMBAS_FUENTES",
+      "pdf_inei": "tic-iii-trimestre_2025_1.pdf",
+      "pagina_pdf_inei": 6
+    },
+    {
+      "periodo": "2025-T4",
+      "conexiones_fijas": 4379544,
+      "hogares_pct": 60.1,
+      "estado": "AMBAS_FUENTES",
+      "pdf_inei": "boletin-tic-oct_dic2025.pdf",
+      "pagina_pdf_inei": 6
+    },
+    {
+      "periodo": "2026-T1",
+      "conexiones_fijas": 4135995,
+      "hogares_pct": 62.7,
+      "estado": "AMBAS_FUENTES",
+      "pdf_inei": "boletin_tic_itrim2026.pdf",
+      "pagina_pdf_inei": 6
+    },
+    {
+      "periodo": "2026-T2",
+      "conexiones_fijas": null,
+      "hogares_pct": 64.5,
+      "estado": "SOLO_INEI",
+      "pdf_inei": "boletin-tic-iit2026.pdf",
+      "pagina_pdf_inei": 6
+    }
+  ],
+  "decisiones": [
+    {
+      "codigo": "D01",
+      "prioridad": "ALTA",
+      "titulo": "Priorizar diagnostico de acceso a internet en zonas rurales",
+      "indicador": "INEI 2026-T2: rural 27.1% frente a Lima Metropolitana 84.7% (57.6 pp de diferencia)",
+      "accion": "Solicitar estudio territorial rural y contrastar con otros datos antes de proponer despliegue.",
+      "evidencia": "boletin-tic-iit2026.pdf, p. 6",
+      "limite": "La diferencia es entre ambitos, no estima hogares desconectados por departamento ni demuestra causa."
+    },
+    {
+      "codigo": "D02",
+      "prioridad": "ALTA",
+      "titulo": "Investigar variaciones recientes de conexiones fijas",
+      "indicador": "OSIPTEL: 4,379,544 (2025-12) -> 4,135,995 (2026-03); variacion -5.56% (-243,549 conexiones)",
+      "accion": "Revisar consistencia de cierre de reporte, bajas/altas de operadores, tecnologia y tramos departamentales. Comenzar revision por UCAYALI: -35.76% y -30,903 conexiones (base >=1000).",
+      "evidencia": "Gold F1 nacional y territorial, version v2_b6e4155ae58e8f9106d8",
+      "limite": "Variacion en stock de conexiones; no demuestra perdida de cobertura geografica ni numero de hogares."
+    },
+    {
+      "codigo": "D03",
+      "prioridad": "ALTA",
+      "titulo": "No incorporar conflictos INEI a indicadores finales",
+      "indicador": "102 grupos conflictivos; 74 series aun sin verificacion semantica; 20 indicadores corroborados.",
+      "accion": "Mantener 102 conflictos y 74 series pendientes fuera del set de indicadores verificados; programar curaduria.",
+      "evidencia": "Mart documental curado F4 v1_17b651ac372a96fb18fa",
+      "limite": "Los registros excluidos conservan valor exploratorio, no son cero ni datos faltantes asumidos."
+    },
+    {
+      "codigo": "D04",
+      "prioridad": "MEDIA",
+      "titulo": "Revisar regulacion y comportamiento de operadores como contexto",
+      "indicador": "287 menciones regulatorias F2 y 12 cifras contextualizadas F3.",
+      "accion": "Consultar expedientes y verificar estado regulatorio ante una decision de infraestructura o comparticion.",
+      "evidencia": "F2 y F3 documental, v1_17b651ac372a96fb18fa",
+      "limite": "Menciones no equivalen a mandatos aprobados; variaciones de operadores no prueban causalidad."
+    }
+  ],
+  "advertencia": "Priorizacion exploratoria para investigacion, no autorizacion de inversion ni mandato. F1 = conexiones fijas; F4 = porcentaje de hogares con cualquier internet."
+}

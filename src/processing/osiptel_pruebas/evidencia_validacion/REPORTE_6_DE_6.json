@@ -1,0 +1,57 @@
+{
+  "inicio_utc": "2026-11-26T02:28:06.025246+00:00",
+  "estado": "APROBADO_TECNICAMENTE",
+  "pruebas": [
+    {
+      "prueba": "01 CSV y SHA-256",
+      "estado": "OK",
+      "segundos": 0.1,
+      "detalle": "CSV_OK F4_102_conflictos_para_revision.csv filas=102 SHA=0831ac3a8d9a14c1\nAUDITORIA_COHERENTE F2=287 F3=12 F4_VERIFICADOS=20 F4_PENDIENTES=74 F4_CONFLICTOS=102"
+    },
+    {
+      "prueba": "02 HDFS _SUCCESS",
+      "estado": "OK",
+      "segundos": 18.8,
+      "detalle": [
+        "OK f2_menciones_documentales_verificadas",
+        "OK f3_cifras_contextualizadas_verificadas",
+        "OK f4_hogares_internet_narrativa_verificados",
+        "OK f4_series_pendientes_revision",
+        "OK f4_conflictos_excluidos",
+        "OK comparacion_nacional_f1_f4_verificada"
+      ]
+    },
+    {
+      "prueba": "03 Spark preflight",
+      "estado": "OK",
+      "segundos": 18.0,
+      "detalle": "Spark: CONTROLES_OK; sin publicacion"
+    },
+    {
+      "prueba": "04 Publicacion idempotente",
+      "estado": "OK",
+      "segundos": 61.6,
+      "detalle": "Seis tablas existentes verificadas por firma sin crear una versión nueva"
+    },
+    {
+      "prueba": "05 Indicadores y decisiones reales",
+      "estado": "OK",
+      "segundos": 18.3,
+      "detalle": {
+        "ultimo_periodo_inei": "2026-T2",
+        "ultimo_periodo_f1": "2026-03",
+        "diferencia_lima_rural_pp": 57.6,
+        "departamentos_evaluados": 25,
+        "departamentos_priorizados": 24
+      }
+    },
+    {
+      "prueba": "06 Interfaz HTTP/CSRF/cuarentena",
+      "estado": "OK",
+      "segundos": 0.2,
+      "detalle": "GET web/APIs OK, CSRF 403 OK y carga temporal en cuarentena OK (archivo de prueba retirado)"
+    }
+  ],
+  "nota": "Las pruebas reusan snapshots ya auditados. No automatizan la aprobacion ni ingesta de nuevos PDF.",
+  "fin_utc": "2026-11-26T02:30:03.049395+00:00"
+}
