@@ -15,6 +15,10 @@ from urllib.parse import parse_qs,urlparse,unquote
 
 HERE=Path(__file__).resolve().parent
 OUT=HERE/'salida'
+PREDICCIONES=Path(os.getenv(
+    'OSIPTEL_PREDICCIONES_JSON',
+    str(OUT/'predicciones.json')
+))
 RUN=Path(os.getenv('OSIPTEL_RUN_DIR','/srv/osiptel/evidence/osiptel_cierre_curado'))
 QUARANTINE=RUN/'cuarentena_upload'
 PORT=int(os.getenv('OSIPTEL_TEST_PANEL_PORT','8767'))
@@ -49,6 +53,66 @@ button{border:0;border-radius:7px;padding:10px 14px;color:white;background:var(-
 <section class="panel"><h2>Fuente 2 · Tipos de menciones</h2><div id="tiposF2" class="small muted">Sin consultar datos.</div></section>
 <section class="panel"><h2>Fuente 3 · Estadística contextualizada</h2><div class="tablebox"><table><thead><tr><th>Periodo</th><th>Entidad / tipo</th><th>Valor</th></tr></thead><tbody id="f3tbl"></tbody></table></div></section>
 <section class="panel"><h2>Subir y evaluar PDF</h2><p class="small muted">Compara un PDF con la auditoría de F2/F3/F4 y extrae evidencias. Un PDF nuevo queda como candidato, nunca se aprueba ni ingresa a HDFS automáticamente.</p><input id="pdfFile" type="file" accept=".pdf,application/pdf"> <button class="alt" onclick="uploadEval()">Subir y evaluar PDF</button><p id="evalmsg" class="small"></p><pre id="pdfResult" style="max-height:360px">Aún no hay evaluaciones.</pre></section></div></div>
+
+
+<section class="panel" style="margin-top:16px" id="panelPredicciones">
+<h2>Analítica predictiva · Random Forest</h2>
+
+<p class="small muted" id="predMeta">
+Esperando resultados de inferencia.
+</p>
+
+<div class="stats">
+  <div class="stat">
+    <label>Conexiones observadas</label>
+    <strong id="predObservado">—</strong>
+  </div>
+  <div class="stat">
+    <label>Conexiones estimadas</label>
+    <strong id="predEstimado">—</strong>
+  </div>
+  <div class="stat">
+    <label>Variación trimestral estimada</label>
+    <strong id="predVariacion">—</strong>
+  </div>
+  <div class="stat">
+    <label>Territorios procesados</label>
+    <strong id="predTerritorios">—</strong>
+  </div>
+</div>
+
+<h3>Variación estimada por territorio</h3>
+
+<p class="small muted">
+Las barras muestran la magnitud del cambio.
+Rojo: disminución. Verde: crecimiento.
+</p>
+
+<div id="predBarras"></div>
+
+<h3>Detalle de predicciones</h3>
+
+<div class="tablebox">
+<table>
+<thead>
+<tr>
+  <th>Departamento</th>
+  <th>Observado</th>
+  <th>Estimado</th>
+  <th>Diferencia</th>
+  <th>Variación</th>
+</tr>
+</thead>
+<tbody id="predTabla"></tbody>
+</table>
+</div>
+
+<p class="hint" id="predAdvertencia">
+Las estimaciones no representan valores confirmados.
+</p>
+
+<p class="small muted" id="predEstado"></p>
+</section>
 
 <section class="panel" style="margin-top:16px" id="nuevaIngestaPanel">
  <h2>Ingreso controlado de PDF nuevos · Bronze → Silver → Gold documental</h2>
@@ -85,7 +149,91 @@ function render(d){payload=d;const inf=d.inei,ns=d.osiptel_f1,serie=inf.series,l
  document.getElementById('tiposF2').innerHTML=d.regulacion_f2.map(x=>`<div class="barrow"><span>${esc(x.tipo).replaceAll('_',' ')}</span><div class="bartrack"><div class="fill" style="width:${(100*x.menciones/287).toFixed(1)}%"></div></div><b>${x.menciones}</b></div>`).join('');
  document.getElementById('f3tbl').innerHTML=d.estadisticas_f3.map(x=>`<tr title="${esc(x.documento)} p.${x.pagina}"><td>${esc(x.periodo)}</td><td>${esc(x.entidad)} · ${esc(x.naturaleza)}</td><td>${fmt(x.valor)}</td></tr>`).join('');
 }
-async function refresh(){try{const [st,rep,dec]=await Promise.all([json('/api/run-status'),json('/api/pruebas'),json('/api/decisiones')]);let x=st.estado||{};document.getElementById('runState').textContent='Acción '+(x.tarea||'ninguna')+': '+(x.fase||'SIN EJECUTAR')+' · '+(x.error||'');document.getElementById('log').textContent=st.log||'Sin registros';const r=rep.reporte;
+
+async function refreshPredicciones(){
+  const estado=document.getElementById('predEstado');
+
+  try{
+    const respuesta=await json('/api/predicciones');
+    const p=respuesta.predicciones;
+
+    if(!p){
+      estado.textContent='Todavía no existe una inferencia publicada.';
+      return;
+    }
+
+    const signed=n=>n==null?'—':(n>0?'+':'')+n.toFixed(2)+'%';
+    const cls=n=>n<0?'negative':'positive';
+    const num=n=>fmt(Math.round(n));
+
+    document.getElementById('predMeta').textContent=
+      'Modelo: '+p.modelo+
+      ' | Entrenamiento hasta: '+p.fin_entrenamiento+
+      ' | Origen: '+p.periodo_origen+
+      ' | Predicción: '+p.periodo_prediccion;
+
+    document.getElementById('predObservado').textContent=
+      num(p.conexiones_nacionales_observadas);
+
+    document.getElementById('predEstimado').textContent=
+      num(p.conexiones_nacionales_estimadas);
+
+    const v=document.getElementById('predVariacion');
+
+    v.textContent=signed(p.variacion_nacional_estimada_pct);
+    v.className=cls(p.variacion_nacional_estimada_pct);
+
+    document.getElementById('predTerritorios').textContent=
+      p.territorios;
+
+    const filas=[...p.predicciones].sort(
+      (a,b)=>a.variacion_estimada_pct-b.variacion_estimada_pct
+    );
+
+    const max=Math.max(
+      1,...filas.map(x=>Math.abs(x.variacion_estimada_pct||0))
+    );
+
+    document.getElementById('predBarras').innerHTML=
+      filas.map(x=>{
+        const valor=x.variacion_estimada_pct;
+        const ancho=Math.abs(valor||0)/max*100;
+        const color=valor<0?'#aa342f':'#166c4a';
+
+        return `<div class="barrow">
+          <span>${esc(x.departamento)}</span>
+          <div class="bartrack">
+            <div class="fill"
+              style="width:${ancho}%;background:${color}">
+            </div>
+          </div>
+          <b class="${cls(valor)}">${signed(valor)}</b>
+        </div>`;
+      }).join('');
+
+    document.getElementById('predTabla').innerHTML=
+      filas.map(x=>`<tr>
+        <td>${esc(x.departamento)}</td>
+        <td>${num(x.conexiones_observadas)}</td>
+        <td>${num(x.conexiones_predichas)}</td>
+        <td>${num(x.variacion_estimada)}</td>
+        <td class="${cls(x.variacion_estimada_pct)}">
+          ${signed(x.variacion_estimada_pct)}
+        </td>
+      </tr>`).join('');
+
+    document.getElementById('predAdvertencia').textContent=
+      p.advertencia+
+      ' Los valores predichos deben contrastarse con los próximos registros de OSIPTEL.';
+
+    estado.textContent='Inferencia generada: '+p.generado_utc;
+
+  }catch(e){
+    estado.textContent='Error al consultar inferencia: '+e.message;
+  }
+}
+
+async function refresh(){refreshPredicciones();try{const [st,rep,dec]=await Promise.all([json('/api/run-status'),json('/api/pruebas'),json('/api/decisiones')]);let x=st.estado||{};document.getElementById('runState').textContent='Acción '+(x.tarea||'ninguna')+': '+(x.fase||'SIN EJECUTAR')+' · '+(x.error||'');document.getElementById('log').textContent=st.log||'Sin registros';const r=rep.reporte;
  if(r){const n=r.pruebas.filter(x=>x.estado==='OK').length;document.getElementById('testState').textContent=r.estado==='APROBADO_TECNICAMENTE'?'6 / 6 OK':r.estado==='ERROR_PRUEBA'?'ERROR':n+' / 6';document.getElementById('testCount').textContent='Pruebas completadas '+n+'/6';document.getElementById('checks').innerHTML=r.pruebas.map(x=>`<p class="small ${x.estado==='OK'?'ok':'fail'}">${x.estado==='OK'?'✓':'✕'} ${esc(x.prueba)} · ${esc(x.estado)} (${x.segundos}s)</p>`).join('');}
  if(dec.decisions && (!payload || dec.decisions.generado_utc!==payload.generado_utc))render(dec.decisions);
  }catch(e){document.getElementById('runState').textContent='Error al leer estado: '+e.message}}
@@ -186,6 +334,8 @@ class Handler(BaseHTTPRequestHandler):
       send(self,200,{'estado':state,'log':log_tail(OUT/'accion_ultima.log')})
     elif route=='/api/pruebas':send(self,200,{'reporte':read_json(OUT/'reporte_pruebas.json')})
     elif route=='/api/decisiones':send(self,200,{'decisions':read_json(OUT/'decisiones.json')})
+    elif route=='/api/predicciones':
+      send(self,200,{'predicciones':read_json(PREDICCIONES)})
     elif route=='/api/uploads':
       QUARANTINE.mkdir(parents=True,exist_ok=True)
       paths=sorted((x for x in QUARANTINE.iterdir() if x.is_file()),key=lambda x:x.stat().st_mtime,reverse=True)[:25]
