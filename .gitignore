@@ -35,3 +35,10 @@ data/raw/muestra_escalabilidad/
 *.key
 credentials.json
 secrets.*
+
+# Entorno y datos locales de analitica
+/data/paquete_20261125_c5cc727/
+/results/
+/models/
+.ipynb_checkpoints/
+.venv/
