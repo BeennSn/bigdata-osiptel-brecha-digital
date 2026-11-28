@@ -42,3 +42,4 @@ secrets.*
 /models/
 .ipynb_checkpoints/
 .venv/
+/src/processing/osiptel_pruebas/salida/
