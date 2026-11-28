@@ -15,6 +15,10 @@ from urllib.parse import parse_qs,urlparse,unquote
 
 HERE=Path(__file__).resolve().parent
 OUT=HERE/'salida'
+KPIS=Path(os.getenv(
+    'OSIPTEL_KPIS_JSON',
+    str(OUT/'kpis.json')
+))
 PREDICCIONES=Path(os.getenv(
     'OSIPTEL_PREDICCIONES_JSON',
     str(OUT/'predicciones.json')
@@ -41,6 +45,40 @@ button{border:0;border-radius:7px;padding:10px 14px;color:white;background:var(-
 </style></head><body>
 <header><div><h1>OSIPTEL · Laboratorio de decisiones</h1><p class="muted" style="margin:4px 0">Prueba integral · HDFS/Spark · F1/F2/F3/F4 · datos revisados</p></div><div class="version">Gold F1 v2 · Mart documental curado v1<br>Interfaz restringida a 127.0.0.1 por túnel SSH</div></header>
 <div class="stats"><div class="stat"><label>Estado pruebas automáticas</label><strong id="testState">Sin ejecutar</strong><div class="small muted" id="testCount"></div></div><div class="stat"><label>Hogares internet rural (INEI)</label><strong id="rural">—</strong><div class="small muted" id="periodoF4">Esperando Spark</div></div><div class="stat"><label>Brecha rural–Lima</label><strong id="gap">—</strong><div class="small muted">Puntos porcentuales, no conexiones</div></div><div class="stat"><label>Variación nacional F1</label><strong id="f1">—</strong><div class="small muted" id="periodoF1">Cierres trimestrales</div></div></div>
+
+<section class="panel" style="margin-bottom:16px">
+  <h2>Indicadores estratégicos de telecomunicaciones</h2>
+
+  <p class="small muted">
+    Indicadores calculados mediante Apache Spark
+    desde la capa dimensional.
+  </p>
+
+  <div class="stats" id="kpiTarjetas"></div>
+
+  <details>
+    <summary>Ficha técnica y decisiones asociadas</summary>
+
+    <div class="tablebox">
+      <table>
+        <thead>
+          <tr>
+            <th>Indicador</th>
+            <th>Fórmula</th>
+            <th>Frecuencia</th>
+            <th>Responsable propuesto</th>
+            <th>Decisión</th>
+          </tr>
+        </thead>
+        <tbody id="kpiFicha"></tbody>
+      </table>
+    </div>
+  </details>
+
+  <p class="small muted" id="kpiEstado">
+    Esperando resultados.
+  </p>
+</section>
 <div class="panel" style="margin-bottom:16px"><h2>Ejecutar y validar el pipeline completo</h2><div class="controls"><button id="allBtn" onclick="start('todo')">1 · Probar todo (6 controles)</button><button class="alt" onclick="start('decisiones')">2 · Actualizar indicadores desde HDFS</button><button class="alt" onclick="start('preflight')">Solo preflight</button><button class="alt" onclick="start('publish')">Repetir publicación (idempotencia)</button><button class="alt" onclick="refresh()">Actualizar resultados</button></div>
 <p id="runState" class="small muted">Sin acción activa.</p><a href="/api/download?file=pruebas">Descargar informe de pruebas JSON</a> · <a href="/api/download?file=decisiones">Descargar decisiones JSON</a>
 <details style="margin-top:10px"><summary>Ver últimas líneas de la ejecución</summary><pre id="log">Sin registros.</pre></details>
@@ -233,7 +271,54 @@ async function refreshPredicciones(){
   }
 }
 
-async function refresh(){refreshPredicciones();try{const [st,rep,dec]=await Promise.all([json('/api/run-status'),json('/api/pruebas'),json('/api/decisiones')]);let x=st.estado||{};document.getElementById('runState').textContent='Acción '+(x.tarea||'ninguna')+': '+(x.fase||'SIN EJECUTAR')+' · '+(x.error||'');document.getElementById('log').textContent=st.log||'Sin registros';const r=rep.reporte;
+
+async function refreshKpis(){
+  const estado=document.getElementById('kpiEstado');
+  const tarjetas=document.getElementById('kpiTarjetas');
+  const ficha=document.getElementById('kpiFicha');
+
+  try{
+    const respuesta=await json('/api/kpis');
+    const r=respuesta.reporte;
+
+    if(!r){
+      tarjetas.innerHTML='';
+      ficha.innerHTML='';
+      estado.textContent='No existe una capa de consumo publicada.';
+      return;
+    }
+
+    tarjetas.innerHTML=r.kpis.map(k=>{
+      const valor=k.valor==null?'No disponible':fmt(k.valor);
+
+      return `<div class="stat">
+        <label>${esc(k.nombre)}</label>
+        <strong>${esc(valor)}</strong>
+        <div class="small muted">
+          ${esc(k.unidad)} · ${esc(k.periodo)}
+        </div>
+      </div>`;
+    }).join('');
+
+    ficha.innerHTML=r.kpis.map(k=>`<tr>
+      <td>${esc(k.nombre)}</td>
+      <td>${esc(k.formula)}</td>
+      <td>${esc(k.frecuencia)}</td>
+      <td>${esc(k.responsable)}</td>
+      <td>${esc(k.decision)}</td>
+    </tr>`).join('');
+
+    estado.textContent=
+      'Generado: '+r.generado_utc+' | '+r.advertencia;
+
+  }catch(e){
+    tarjetas.innerHTML='';
+    ficha.innerHTML='';
+    estado.textContent='Error al cargar indicadores: '+e.message;
+  }
+}
+
+async function refresh(){refreshKpis();refreshPredicciones();try{const [st,rep,dec]=await Promise.all([json('/api/run-status'),json('/api/pruebas'),json('/api/decisiones')]);let x=st.estado||{};document.getElementById('runState').textContent='Acción '+(x.tarea||'ninguna')+': '+(x.fase||'SIN EJECUTAR')+' · '+(x.error||'');document.getElementById('log').textContent=st.log||'Sin registros';const r=rep.reporte;
  if(r){const n=r.pruebas.filter(x=>x.estado==='OK').length;document.getElementById('testState').textContent=r.estado==='APROBADO_TECNICAMENTE'?'6 / 6 OK':r.estado==='ERROR_PRUEBA'?'ERROR':n+' / 6';document.getElementById('testCount').textContent='Pruebas completadas '+n+'/6';document.getElementById('checks').innerHTML=r.pruebas.map(x=>`<p class="small ${x.estado==='OK'?'ok':'fail'}">${x.estado==='OK'?'✓':'✕'} ${esc(x.prueba)} · ${esc(x.estado)} (${x.segundos}s)</p>`).join('');}
  if(dec.decisions && (!payload || dec.decisions.generado_utc!==payload.generado_utc))render(dec.decisions);
  }catch(e){document.getElementById('runState').textContent='Error al leer estado: '+e.message}}
@@ -334,6 +419,8 @@ class Handler(BaseHTTPRequestHandler):
       send(self,200,{'estado':state,'log':log_tail(OUT/'accion_ultima.log')})
     elif route=='/api/pruebas':send(self,200,{'reporte':read_json(OUT/'reporte_pruebas.json')})
     elif route=='/api/decisiones':send(self,200,{'decisions':read_json(OUT/'decisiones.json')})
+    elif route=='/api/kpis':
+      send(self,200,{'reporte':read_json(KPIS)})
     elif route=='/api/predicciones':
       send(self,200,{'predicciones':read_json(PREDICCIONES)})
     elif route=='/api/uploads':
